@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuaninsr.xianyuque.mapper.FileInfoMapper">
+    <insert id="insert">
+        INSERT INTO file_info (ID, title, localName, isFolder,
+                        isTopLev, lastEdit, cacheFor, insideOf)
+        VALUES (#{ID}, #{title}, #{localName}, #{isFolder},
+                #{isTopLev}, #{lastEdit}, #{cacheFor}, #{insideOf});
+    </insert>
+
+    <select id="selectById" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info WHERE ID = #{ID} ORDER BY lastEdit;
+    </select>
+
+    <select id="selectAllFileInfo" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info ORDER BY lastEdit;
+    </select>
+
+    <select id="selectAll" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info;
+    </select>
+</mapper>
