@@ -42,4 +42,9 @@ public class xianyuqueController {
         // helloThymeleaf 会找到 templates/list.html，总而成为了模板
         return "list";
     }
+
+    @RequestMapping("/edit")
+    public String edit(Model model){
+        return "edit";
+    }
 }
