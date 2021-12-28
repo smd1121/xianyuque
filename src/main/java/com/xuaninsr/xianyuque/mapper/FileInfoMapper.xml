@@ -9,7 +9,7 @@
                 #{isTopLev}, #{lastEdit}, #{cacheFor}, #{insideOf});
     </insert>
 
-    <select id="selectById" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+    <select id="selectByID" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
         SELECT * FROM file_info WHERE ID = #{ID} ORDER BY lastEdit;
     </select>
 

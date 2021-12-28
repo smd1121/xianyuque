@@ -8,6 +8,6 @@
     </insert>
 
     <select id="selectByID" resultType="com.xuaninsr.xianyuque.pojo.User">
-        SELECT * FROM users WHERE ID = #{ID};
+        SELECT ID, Name as name, EnKey as password FROM users WHERE ID = #{ID};
     </select>
 </mapper>

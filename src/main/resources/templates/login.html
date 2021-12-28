@@ -61,7 +61,7 @@
             咸鱼暄的简陋文档管理编辑器
         </div>
         <form style="margin: 30px auto 0 auto" action="#"
-              th:action="@{/processLogin}" th:object="${user}" method="post">
+              th:action="@{/login}" th:object="${user}" method="post">
             <label>
                 <input th:field="*{ID}" type="text" autofocus="autofocus" placeholder="用户名" class="input"/>
             </label>
@@ -72,6 +72,7 @@
         </form>
         <button id="register" type="button" class="input grayButton"
                 onclick="location.href='/register'">注 册</button>
+        <div style="font-size: 16px; margin: 0 auto; color: red" th:text="${loginTips}"></div>
     </div>
 </body>
 </html>
