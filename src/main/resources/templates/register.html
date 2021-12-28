@@ -1,10 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>注册 · 咸鱼雀</title>
+    <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <style type="text/css">
+        body {background:#f5f5f5}
+        .white_roundedRect {
+            background: #ffffff;
+            border-style: solid;
+            border-color: #cccccc;
+            border-width: 1px;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .input:focus {
+            border: 1px solid #4a5;
+        }
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .greenButton:hover {
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            background-color: #308025;
+        }
+        .grayButton {
+            background-color: #d5d5d5;
+            color: #081924;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .grayButton:hover, .grayButton:active {
+            background-color: #c5c5c5;
+        }
+    </style>
 </head>
 <body>
-
+<div class="white_roundedRect" style="margin: 80px auto; width: 300px; height: 500px;">
+    <div style="border-radius: 50px; height: 100px; width: 100px; overflow:hidden; margin: 30px auto 10px auto">
+        <img alt="logo" src="/logo.ico" height="100px" width="100px"/>
+    </div>
+    <div style="font-size: 30px; margin: 4px auto; text-align: center; color:#081924">
+        咸 鱼 雀
+    </div>
+    <div style="font-size: 18px; margin: 0 auto; text-align: center; color:#1A6693">
+        咸鱼暄的简陋文档管理编辑器
+    </div>
+    <form style="margin: 30px auto 0 auto" action="#"
+          th:action="@{/register}" th:object="${user}" method="post">
+        <label>
+            <input th:field="*{ID}" type="text" autofocus="autofocus" placeholder="用户名" class="input"/>
+        </label>
+        <label>
+            <input th:field="*{password}" type="password" placeholder="密码" class="input"/>
+        </label>
+        <label>
+            <input th:field="*{name}" type="text" placeholder="昵称" class="input"/>
+        </label>
+        <input id="submit_login" type="submit" value="注 册" class="input greenButton"/>
+    </form>
+    <div style="font-size: 16px; margin: 0 auto; color: red" th:text="${regTips}"></div>
+</div>
 </body>
 </html>

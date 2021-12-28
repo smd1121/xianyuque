@@ -3,7 +3,6 @@ package com.xuaninsr.xianyuque.service.impl;
 import com.xuaninsr.xianyuque.mapper.FileInfoMapper;
 import com.xuaninsr.xianyuque.pojo.FileInfo;
 import com.xuaninsr.xianyuque.service.FileInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

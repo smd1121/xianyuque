@@ -1,5 +1,6 @@
 package com.xuaninsr.xianyuque.pojo;
 
+import com.xuaninsr.xianyuque.utils.MD5Util;
 import org.springframework.lang.Nullable;
 
 public class User {
@@ -20,7 +21,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = MD5Util.getMD5(password);;
     }
 
     @Nullable

@@ -13,11 +13,7 @@
         SELECT * FROM file_info WHERE ID = #{ID} ORDER BY lastEdit;
     </select>
 
-    <select id="selectAllFileInfo" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
-        SELECT * FROM file_info ORDER BY lastEdit;
-    </select>
-
     <select id="selectAll" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
-        SELECT * FROM file_info;
+        SELECT * FROM file_info ORDER BY lastEdit;
     </select>
 </mapper>
