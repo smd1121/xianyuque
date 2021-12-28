@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <!--表示这个是⼀个thymeleaf-->
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
 <head>
-    <title>Thymeleaf⼊⻔</title>
+    <title>文件列表 · 咸鱼雀</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon" />
 </head>
 <body>
 <div th:switch="${files}" class="container my-5">

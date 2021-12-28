@@ -1,14 +1,16 @@
 package com.xuaninsr.xianyuque.controller;
 
 import com.xuaninsr.xianyuque.pojo.FileInfo;
+import com.xuaninsr.xianyuque.pojo.User;
 import com.xuaninsr.xianyuque.service.FileInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 @Controller // controller 想要一个模板！
 public class xianyuqueController {
@@ -46,5 +48,18 @@ public class xianyuqueController {
     @RequestMapping("/edit")
     public String edit(Model model){
         return "edit";
+    }
+
+    @RequestMapping("/login")
+    public String login(Model model){
+        User user = new User();
+        model.addAttribute("user", user);
+        return "login";
+    }
+
+    @RequestMapping(value = "/processLogin", method=RequestMethod.POST)
+    public String handleLogin(@ModelAttribute(value="user") User user) {
+        
+        return "redirect:/list";
     }
 }
