@@ -37,4 +37,13 @@ public class FileInfoServiceImpl implements FileInfoService {
     public List<FileInfo> selectSonVisibleForUser(int fileID, String userID) {
         return fileInfoMapper.selectSonVisibleForUser(fileID, userID);
     }
+
+    public int getLargestFileID() {
+        return fileInfoMapper.getLargestID();
+    }
+
+    public void deleteFileByID(int ID) {
+        // TODO: delete the file
+        fileInfoMapper.deleteByID(ID);
+    }
 }

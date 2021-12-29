@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,18 @@ public class xianyuqueController {
         return false;
     }
 
+    private User getUserByRequest(HttpServletRequest request) {
+        Cookie[] requestCookies = request.getCookies();
+        String id;
+
+        for (Cookie c : requestCookies) {
+            id = getCookieMapID(c);
+            if (id != null)
+                return userService.selectUserByID(id);
+        }
+        return null;
+    }
+
     @RequestMapping("/")
     public String index(HttpServletRequest request) {
         Cookie[] requestCookies = request.getCookies();
@@ -62,52 +75,12 @@ public class xianyuqueController {
         return "redirect:/login";
     }
 
-    private void fillListWithSon(FileInfo f, List<FileInfo> list, String userID, int level) {
-        for (FileInfo innerF : fileInfoService.selectSonVisibleForUser(f.getID(), userID)) {
-            String titleWithSpace = "";
-            for (int i = 0; i < level; i++)
-                titleWithSpace += " ";
-            innerF.setTitle(titleWithSpace + innerF.getTitle());
-            list.add(innerF);
-            fillListWithSon(innerF, list, userID, level + 1);
-        }
-    }
-
-    @RequestMapping("/list/{id}")
-    public String list(Model model, @PathVariable String id, HttpServletRequest request){
-        if (!checkIsLogin(request))
-            return "redirect:/login";
-
-        List<FileInfo> list = new ArrayList<>();
-        for (FileInfo f : fileInfoService.selectAllTopLevelByUser(id)) {
-            list.add(f);
-            fillListWithSon(f, list, id, 1);
-        }
-
-        model.addAttribute("files", list);
-        // helloThymeleaf 会找到 templates/list.html，从而成为了模板
-        return "list";
-    }
-
-    @RequestMapping("/edit")
-    public String edit(Model model){
-        return "edit";
-    }
-
     @RequestMapping(value = "/login", method=RequestMethod.GET)
     public String login(Model model){
         User user = new User();
         model.addAttribute("user", user);
         model.addAttribute("loginTips", "");
         return "login";
-    }
-
-    @RequestMapping(value = "/register", method=RequestMethod.GET)
-    public String register(Model model){
-        User user = new User();
-        model.addAttribute("user", user);
-        model.addAttribute("regTips", "");
-        return "register";
     }
 
     @RequestMapping(value = "/login", method=RequestMethod.POST)
@@ -120,7 +93,8 @@ public class xianyuqueController {
             return mv;
         }
         else if (!MD5Util.getMD5(user.getPassword()).equals(existingUser.getPassword())) {
-            System.out.println(user.getPassword() + " " + existingUser.getPassword());
+            System.out.println(user.getPassword() + " " + existingUser.getPassword() + " "
+                    + MD5Util.getMD5(user.getPassword()).equals(existingUser.getPassword()));
             ModelAndView mv = new ModelAndView("login");
             mv.addObject("loginTips", "用户名或密码错误！");
             return mv;
@@ -129,12 +103,12 @@ public class xianyuqueController {
         }
     }
 
-    private ModelAndView setCookie(@ModelAttribute("user") User user, HttpServletResponse response) {
-        Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
-        cookie.setMaxAge(60 * 60 * 24);
-        cookies.put(cookie, user.getID());
-        response.addCookie(cookie);
-        return new ModelAndView("redirect:/list/" + user.getID());
+    @RequestMapping(value = "/register", method=RequestMethod.GET)
+    public String register(Model model){
+        User user = new User();
+        model.addAttribute("user", user);
+        model.addAttribute("regTips", "");
+        return "register";
     }
 
     @RequestMapping(value = "/register", method=RequestMethod.POST)
@@ -151,4 +125,105 @@ public class xianyuqueController {
             return setCookie(user, response);
         }
     }
+
+    @RequestMapping(value = "/profile", method=RequestMethod.GET)
+    public String profile(Model model, HttpServletRequest request){
+        User user = getUserByRequest(request);
+        if (user == null) {
+            return "redirect:/";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("updateTips", "");
+        return "profile";
+    }
+
+    @RequestMapping(value = "/profile", method=RequestMethod.POST)
+    public ModelAndView handleProfile(@ModelAttribute(value="user") User user,
+                                       HttpServletRequest request) {
+        User existingUser = getUserByRequest(request);
+        if (existingUser == null) {
+            return new ModelAndView("redirect:/");
+        }
+        else {
+            if (!StringUtils.isEmptyOrWhitespace(user.getPassword()))
+                userService.updatePassword(existingUser.getID(), user.getPassword());
+
+            if (!StringUtils.isEmptyOrWhitespace(user.getName()))
+                userService.updateName(existingUser.getID(), user.getName());
+
+            ModelAndView mv = new ModelAndView("profile");
+            mv.addObject("user", getUserByRequest(request));
+            mv.addObject("updateTips", "更新成功！");
+            return mv;
+        }
+    }
+
+    @RequestMapping(value = "/logout")
+    public String logout(HttpServletRequest request) {
+        Cookie[] requestCookies = request.getCookies();
+        for (Cookie c : requestCookies) {
+            cookies.keySet().removeIf(key -> key.getValue().equals(c.getValue()));
+        }
+        return "redirect:/";
+    }
+
+    private void fillListWithSon(FileInfo f, List<FileInfo> list, String userID, int level) {
+        for (FileInfo innerF : fileInfoService.selectSonVisibleForUser(f.getID(), userID)) {
+            String titleWithSpace = "";
+            for (int i = 0; i < level; i++)
+                titleWithSpace += " ";
+            innerF.setTitle(titleWithSpace + innerF.getTitle());
+            list.add(innerF);
+            fillListWithSon(innerF, list, userID, level + 1);
+        }
+    }
+
+    @RequestMapping("/list/{id}")
+    public String list(Model model, @PathVariable String id, HttpServletRequest request){
+        User loginUser = getUserByRequest(request);
+
+        if (loginUser == null)
+            return "redirect:/login";
+
+        if (!loginUser.getID().equals(id))
+            return "redirect:/list/" + loginUser.getID();
+
+        List<FileInfo> list = new ArrayList<>();
+        for (FileInfo f : fileInfoService.selectAllTopLevelByUser(id)) {
+            list.add(f);
+            fillListWithSon(f, list, id, 1);
+        }
+
+        if (list.isEmpty())
+            return "redirect:/start";
+
+        model.addAttribute("files", list);
+        // helloThymeleaf 会找到 templates/list.html，从而成为了模板
+        return "list";
+    }
+
+    @RequestMapping("/edit")
+    public String edit(Model model){
+        return "edit";
+    }
+
+
+
+
+    @RequestMapping(value = "/delete", method=RequestMethod.POST)
+    public String handleDelete(@ModelAttribute(value="fileID") int fileID) {
+        fileInfoService.deleteFileByID(fileID);
+        return "redirect:/";
+    }
+
+
+    private ModelAndView setCookie(@ModelAttribute("user") User user, HttpServletResponse response) {
+        Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
+        cookie.setMaxAge(60 * 60 * 24);
+        cookies.put(cookie, user.getID());
+        response.addCookie(cookie);
+        return new ModelAndView("redirect:/list/" + user.getID());
+    }
+
+
 }

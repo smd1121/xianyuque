@@ -10,4 +10,6 @@ public interface FileInfoService {
     List<FileInfo> selectAllFileInfo();
     List<FileInfo> selectAllTopLevelByUser(String userID);
     List<FileInfo> selectSonVisibleForUser(int fileID, String userID);
+    int getLargestFileID();
+    void deleteFileByID(int ID);
 }

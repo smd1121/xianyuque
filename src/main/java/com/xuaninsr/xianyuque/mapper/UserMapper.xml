@@ -10,4 +10,12 @@
     <select id="selectByID" resultType="com.xuaninsr.xianyuque.pojo.User">
         SELECT ID, Name as name, EnKey as password FROM users WHERE ID = #{ID};
     </select>
+
+    <update id="updatePassword">
+        UPDATE users SET EnKey = #{password} WHERE ID = #{ID};
+    </update>
+
+    <update id="updateName">
+        UPDATE users SET Name = #{name} WHERE ID = #{ID};
+    </update>
 </mapper>

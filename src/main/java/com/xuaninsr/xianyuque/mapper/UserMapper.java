@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     void insert(User user);
     User selectByID(String ID);
+    void updatePassword(String ID, String password);
+    void updateName(String ID, String name);
 }

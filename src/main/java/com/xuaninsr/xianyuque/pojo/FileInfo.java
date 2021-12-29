@@ -69,6 +69,8 @@ public class FileInfo implements Serializable {
         if (lastEdit == null)
             return "";
 
+        Timestamp lastEdit = new Timestamp(this.lastEdit.getTime() - 60 * 60 * 8 * 1000);
+
         long currentTimestamps = System.currentTimeMillis();
         long oneDayTimestamps = (long) (60 * 60 * 24 * 1000);
         long todayBegin = currentTimestamps -

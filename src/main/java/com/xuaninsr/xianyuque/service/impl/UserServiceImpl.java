@@ -19,4 +19,12 @@ public class UserServiceImpl implements UserService {
     public User selectUserByID(String ID) {
         return userMapper.selectByID(ID);
     }
+
+    public void updatePassword(String ID, String password) {
+        userMapper.updatePassword(ID, password);
+    }
+
+    public void updateName(String ID, String name) {
+        userMapper.updateName(ID, name);
+    }
 }

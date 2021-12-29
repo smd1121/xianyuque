@@ -12,5 +12,6 @@ public interface FileInfoMapper {
     List<FileInfo> selectAll();
     List<FileInfo> selectAllTopLevelByUser(String userID);
     List<FileInfo> selectSonVisibleForUser(int fileID, String userID);
-
+    int getLargestID();
+    void deleteByID(int ID);
 }

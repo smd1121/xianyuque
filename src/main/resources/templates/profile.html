@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>个人设置 · 咸鱼雀</title>
+    <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <style type="text/css">
+        body {background:#f5f5f5}
+        .white_roundedRect {
+            background: #ffffff;
+            border-style: solid;
+            border-color: #cccccc;
+            border-width: 1px;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .input {
+             width: 100%;
+             padding: 12px 20px;
+             margin: 8px auto;
+             border: 1px solid #ccc;
+             border-radius: 4px;
+             box-sizing: border-box;
+        }
+        .input:focus {
+            border: 1px solid #4a5;
+        }
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .greenButton:hover {
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            background-color: #308025;
+        }
+        .grayButton {
+            background-color: #d5d5d5;
+            color: #081924;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .grayButton:hover, .grayButton:active {
+            background-color: #c5c5c5;
+        }
+    </style>
+</head>
+<body>
+    <div class="white_roundedRect" style="margin: 80px auto; width: 300px; height: 550px;">
+        <div style="border-radius: 50px; height: 100px; width: 100px; overflow:hidden; margin: 30px auto 10px auto">
+            <img alt="logo" src="/logo.ico" height="100px" width="100px"/>
+        </div>
+        <div style="font-size: 30px; margin: 4px auto; text-align: center; color:#081924">
+            更新个人信息
+        </div>
+        <div style="font-size: 18px; margin: 0 auto; text-align: center; color:#1A6693" th:object="${user}">
+            <span th:text="*{name}"></span>
+        </div>
+        <form style="margin: 30px auto 0 auto" action="#"
+              th:action="@{/profile}" th:object="${user}" method="post">
+            <label>
+                <input th:field="*{name}" type="text" autofocus="autofocus" th:placeholder="*{name} + '新昵称（留空则不更新）'" class="input"/>
+            </label>
+            <label>
+                <input th:field="*{password}" type="password" placeholder="新密码（留空则不更新）" class="input"/>
+            </label>
+            <input id="submit_login" type="submit" value="更 新" class="input greenButton"/>
+        </form>
+        <button id="register" type="button" class="input grayButton"
+                onclick="location.href='/logout'">退出登录</button>
+        <button id="return" type="button" class="input grayButton"
+                onclick="location.href='/'">返回</button>
+        <div style="font-size: 16px; margin: 0 auto; color: red" th:text="${updateTips}"></div>
+    </div>
+</body>
+</html>

@@ -28,4 +28,12 @@
         WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to)
         AND insideOf = #{fileID};
     </select>
+
+    <select id="getLargestID" resultType="int">
+        SELECT MAX(ID) FROM file_info;
+    </select>
+
+    <delete id="deleteByID">
+        DELETE FROM file_info WHERE ID = #{ID};
+    </delete>
 </mapper>
