@@ -16,4 +16,5 @@ public interface FileInfoService {
     void updateFile(Article article);
     FileInfo getCache(int ID);
     FileInfo getActual(int ID);
+    void insertPrivilege(int fileID, String userID);
 }

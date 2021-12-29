@@ -65,6 +65,21 @@ public class FileInfo implements Serializable {
         isTopLev = topLev;
     }
 
+    public FileInfo() {}
+
+    public FileInfo(int ID, @Nullable String title, @Nullable String localName,
+                    boolean isFolder, boolean isTopLev, @Nullable Timestamp lastEdit,
+                    @Nullable int cacheFor, @Nullable int insideOf) {
+        this.ID = ID;
+        this.title = title;
+        this.localName = localName;
+        this.isFolder = isFolder;
+        this.isTopLev = isTopLev;
+        this.lastEdit = lastEdit;
+        this.cacheFor = cacheFor;
+        this.insideOf = insideOf;
+    }
+
     public String getLastEdit() {
         if (lastEdit == null)
             return "";
@@ -86,16 +101,16 @@ public class FileInfo implements Serializable {
         this.lastEdit = lastEdit;
     }
 
-    public int getCacheFor() {
-        return cacheFor;
+    public String getCacheFor() {
+        return cacheFor == -1 ? null : Integer.toString(cacheFor);
     }
 
     public void setCacheFor(int cacheFor) {
         this.cacheFor = cacheFor;
     }
 
-    public int getInsideOf() {
-        return insideOf;
+    public String getInsideOf() {
+        return insideOf == -1 ? null : Integer.toString(insideOf);
     }
 
     public void setInsideOf(int insideOf) {

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="zh">
 <head>
     <meta charset="utf-8" />
-    <title>Simple example - Editor.md examples</title>
+    <title>编辑 · 咸鱼雀</title>
     <link rel="stylesheet" th:href="@{/css/examples/style.css}" />
     <link rel="stylesheet" th:href="@{/css/editormd.css}" />
     <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
@@ -20,6 +20,28 @@
         .title:focus {
             border: #d5d5d5;
             border-radius: 5px;
+        }
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding: 3px 8px;
+            size: inherit;
+            text-decoration: none;
+        }
+        .greenButton:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            color: white;
+            text-decoration: none;
+            background-color: #308025;
         }
     </style>
 </head>
@@ -56,7 +78,7 @@
             },
             // 自定义图标后，定义图标对应的文字
             toolbarIconTexts: {
-                publish: "<span bgcolor='gray'>发布</span>"
+                publish: "<span class='greenButton'>发布</span>"
             },
             // 自定义图标的触发
             toolbarHandlers : {

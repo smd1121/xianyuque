@@ -17,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Controller // controller 想要一个模板！
@@ -251,12 +252,46 @@ public class xianyuqueController {
         return setMVForEditAndRead(id, mv);
     }
 
+    private Map<String, Long> newPeriod = new HashMap<>();
+
+    @RequestMapping("/new")
+    public ModelAndView handleNew(Model model, HttpServletRequest request){
+        System.out.println("  new  ");
+        User user = getUserByRequest(request);
+        if (user == null)
+            return new ModelAndView("redirect:/");
+
+        if (newPeriod.get(user.getID()) != null) {
+            if (System.currentTimeMillis() - newPeriod.get(user.getID()) <= 1000)
+                return new ModelAndView("redirect:/");
+            else
+                newPeriod.remove(user.getID());
+        }
+
+        newPeriod.put(user.getID(), System.currentTimeMillis());
+
+        FileInfo fileInfo = new FileInfo(
+                fileInfoService.getLargestFileID() + (int)(Math.random() * 100),
+                "未命名", "", false, true,
+                new Timestamp(System.currentTimeMillis()), -1, -1);
+        fileInfoService.insertFileInfo(fileInfo);
+        fileInfoService.insertPrivilege(fileInfo.getID(), user.getID());
+
+        FileInfo cacheFileInfo = new FileInfo(
+                fileInfoService.getLargestFileID() + (int)(Math.random() * 100),
+                "未命名", "", false, true,
+                new Timestamp(System.currentTimeMillis()), fileInfo.getID(), -1);
+        fileInfoService.insertFileInfo(cacheFileInfo);
+        fileInfoService.insertPrivilege(cacheFileInfo.getID(), user.getID());
+
+        ModelAndView mv = new ModelAndView("/edit");
+        return setMVForEditAndRead(cacheFileInfo.getID(), mv);
+    }
+
     @RequestMapping("/publish")
     public ModelAndView publish(@ModelAttribute(value="article") Article article,
                                 HttpServletRequest request) {
-        // TODO: id ==> get
-        // int id = getActual(article.getID());
-        // updateFileInfo(article);
+        // TODO: id ==> getActural(id)
         fileInfoService.updateFile(article);
         System.out.println("publish: " + article.getID() + " " + article.getTitle()
                         + ' ' + article.getContent());

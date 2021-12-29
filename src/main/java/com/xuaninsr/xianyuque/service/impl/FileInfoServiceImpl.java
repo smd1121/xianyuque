@@ -17,6 +17,7 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Override
     public void insertFileInfo(FileInfo fileInfo) {
+        System.out.println("  insert  " + fileInfo.getID());
         fileInfoMapper.insert(fileInfo);
     }
 
@@ -60,5 +61,9 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     public FileInfo getActual(int ID) {
         return fileInfoMapper.getActual(ID);
+    }
+
+    public void insertPrivilege(int fileID, String userID) {
+        fileInfoMapper.insertPrivilege(fileID, userID);
     }
 }

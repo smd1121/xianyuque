@@ -19,4 +19,5 @@ public interface FileInfoMapper {
     void updateFile(int ID, String title, String content, Timestamp lastEdit);
     FileInfo getCache(int ID);
     FileInfo getActual(int ID);
+    void insertPrivilege(int fileID, String userID);
 }

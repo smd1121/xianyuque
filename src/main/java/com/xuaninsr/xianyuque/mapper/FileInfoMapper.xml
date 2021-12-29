@@ -5,8 +5,8 @@
     <insert id="insert">
         INSERT INTO file_info (ID, title, localName, isFolder,
                         isTopLev, lastEdit, cacheFor, insideOf)
-        VALUES (#{ID}, #{title}, #{localName}, #{isFolder},
-                #{isTopLev}, #{lastEdit}, #{cacheFor}, #{insideOf});
+        VALUES (#{ID}, #{title}, #{localName}, #{isFolder}, #{isTopLev},
+                #{lastEdit}, #{cacheFor}, #{insideOf});
     </insert>
 
     <select id="selectByID" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
@@ -20,13 +20,13 @@
     <select id="selectAllTopLevelByUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
         SELECT * FROM file_info
         WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to)
-        AND isTopLev = true AND insideOf is null;
+        AND isTopLev = true AND insideOf is null AND cacheFor is null;
     </select>
 
     <select id="selectSonVisibleForUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
         SELECT * FROM file_info
         WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to)
-        AND insideOf = #{fileID};
+        AND insideOf = #{fileID} AND cacheFor is null;
     </select>
 
     <select id="getLargestID" resultType="int">
@@ -54,4 +54,8 @@
             SELECT cacheFor FROM file_info WHERE ID = #{ID}
         );
     </select>
+
+    <insert id="insertPrivilege">
+        INSERT INTO visible_to VALUES (#{userID}, #{fileID}, true, true);
+    </insert>
 </mapper>
