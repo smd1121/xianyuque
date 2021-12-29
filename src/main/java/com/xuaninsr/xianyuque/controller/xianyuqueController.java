@@ -210,7 +210,6 @@ public class xianyuqueController {
 
         if (list.isEmpty())
             return "redirect:/start";
-        // TODO: start
         model.addAttribute("files", list);
         // helloThymeleaf 会找到 templates/list.html，从而成为了模板
         return "list";
@@ -301,5 +300,14 @@ public class xianyuqueController {
         System.out.println("publish: " + article.getID() + " " + article.getTitle()
                         + ' ' + article.getContent());
         return new ModelAndView("redirect:/read/" + article.getID());
+    }
+
+    @RequestMapping("/autoSave/{id}")
+    public String autoSave(@ModelAttribute(value="article") Article article,
+                           HttpServletRequest request, @PathVariable int id) {
+        fileInfoService.updateFile(article);
+        System.out.println("autoSave: " + article.getID() + " " + article.getTitle()
+                + ' ' + article.getContent());
+        return "redirect:/edit/" + Integer.toString(fileInfoService.getActual(id).getID());
     }
 }

@@ -50,9 +50,11 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     public void updateFile(Article article) {
-        if (article != null)
+        if (article != null) {
             fileInfoMapper.updateFile(article.getID(), article.getTitle(),
                     article.getContent(), new Timestamp(System.currentTimeMillis()));
+            System.out.println("UpdateFile: " + article.getID() + " " + article.getTitle());
+        }
     }
 
     public FileInfo getCache(int ID) {
