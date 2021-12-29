@@ -1,19 +1,29 @@
 package com.xuaninsr.xianyuque.pojo;
 
+import org.joda.time.DateTime;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 public class FileInfo implements Serializable {
     private int ID;
-    @Nullable private String title;
-    @Nullable private String localName;
-    @Nullable private boolean isFolder;
-    @Nullable private boolean isTopLev;
-    @Nullable private Date lastEdit;
-    @Nullable private int cacheFor;
-    @Nullable private int insideOf;
+    @Nullable
+    private String title;
+    @Nullable
+    private String localName;
+    @Nullable
+    private boolean isFolder;
+    @Nullable
+    private boolean isTopLev;
+    @Nullable
+    private Timestamp lastEdit;
+    @Nullable
+    private int cacheFor;
+    @Nullable
+    private int insideOf;
 
     public int getID() {
         return ID;
@@ -55,11 +65,22 @@ public class FileInfo implements Serializable {
         isTopLev = topLev;
     }
 
-    public Date getLastEdit() {
-        return lastEdit;
+    public String getLastEdit() {
+        if (lastEdit == null)
+            return "";
+
+        long currentTimestamps = System.currentTimeMillis();
+        long oneDayTimestamps = (long) (60 * 60 * 24 * 1000);
+        long todayBegin = currentTimestamps -
+                (currentTimestamps + 60 * 60 * 8 * 1000) % oneDayTimestamps;
+        if (lastEdit.after(new Timestamp(todayBegin))) {
+            return new Time(lastEdit.getTime()).toString();
+        }
+        return new Date(lastEdit.getTime()).toString() + " "
+                + new Time(lastEdit.getTime()).toString();
     }
 
-    public void setLastEdit(Date lastEdit) {
+    public void setLastEdit(Timestamp lastEdit) {
         this.lastEdit = lastEdit;
     }
 
