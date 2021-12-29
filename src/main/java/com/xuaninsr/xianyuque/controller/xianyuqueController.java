@@ -1,5 +1,6 @@
 package com.xuaninsr.xianyuque.controller;
 
+import com.xuaninsr.xianyuque.pojo.Article;
 import com.xuaninsr.xianyuque.pojo.FileInfo;
 import com.xuaninsr.xianyuque.pojo.User;
 import com.xuaninsr.xianyuque.service.FileInfoService;
@@ -25,7 +26,8 @@ public class xianyuqueController {
     private Map<Cookie, String> cookies;
 
     @Autowired
-    public xianyuqueController(FileInfoService fileInfoService, UserService userService) {
+    public xianyuqueController(FileInfoService fileInfoService,
+                               UserService userService) {
         this.fileInfoService = fileInfoService;
         this.userService = userService;
         this.cookies = new HashMap<>();
@@ -61,6 +63,15 @@ public class xianyuqueController {
                 return userService.selectUserByID(id);
         }
         return null;
+    }
+
+    private ModelAndView setCookie(@ModelAttribute("user") User user,
+                                   HttpServletResponse response) {
+        Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
+        cookie.setMaxAge(60 * 60 * 24);
+        cookies.put(cookie, user.getID());
+        response.addCookie(cookie);
+        return new ModelAndView("redirect:/list/" + user.getID());
     }
 
     @RequestMapping("/")
@@ -196,19 +207,11 @@ public class xianyuqueController {
 
         if (list.isEmpty())
             return "redirect:/start";
-
+        // TODO: start
         model.addAttribute("files", list);
         // helloThymeleaf 会找到 templates/list.html，从而成为了模板
         return "list";
     }
-
-    @RequestMapping("/edit")
-    public String edit(Model model){
-        return "edit";
-    }
-
-
-
 
     @RequestMapping(value = "/delete", method=RequestMethod.POST)
     public String handleDelete(@ModelAttribute(value="fileID") int fileID) {
@@ -216,14 +219,23 @@ public class xianyuqueController {
         return "redirect:/";
     }
 
-
-    private ModelAndView setCookie(@ModelAttribute("user") User user, HttpServletResponse response) {
-        Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
-        cookie.setMaxAge(60 * 60 * 24);
-        cookies.put(cookie, user.getID());
-        response.addCookie(cookie);
-        return new ModelAndView("redirect:/list/" + user.getID());
+    @RequestMapping("/edit")
+    public String edit(Model model){
+        return "edit";
     }
 
-
+    @RequestMapping("/read/{id}")
+    public ModelAndView read(Model model, @PathVariable int id) {
+        ModelAndView mv = new ModelAndView("/read");
+        FileInfo fileInfo = fileInfoService.selectFileInfoByID(id);
+        if (fileInfo == null) {
+            return new ModelAndView("/error");
+        }
+        Article article = new Article();
+        article.setTitle(fileInfo.getTitle());
+        article.setID(id);
+        article.setContent(fileInfo.getLocalName());
+        mv.addObject("article", article);
+        return mv;
+    }
 }
