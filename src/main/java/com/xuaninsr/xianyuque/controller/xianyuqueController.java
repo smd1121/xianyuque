@@ -248,7 +248,7 @@ public class xianyuqueController {
     public ModelAndView edit(Model model, @PathVariable int id){
         // TODO: privilege
         ModelAndView mv = new ModelAndView("/edit");
-        // TODO: id ==> getCache(id)
+        id = fileInfoService.getCache(id).getID();
         return setMVForEditAndRead(id, mv);
     }
 
@@ -288,10 +288,15 @@ public class xianyuqueController {
         return setMVForEditAndRead(cacheFileInfo.getID(), mv);
     }
 
+    @RequestMapping("/start")
+    public String start() {
+        return "start";
+    }
+
     @RequestMapping("/publish")
     public ModelAndView publish(@ModelAttribute(value="article") Article article,
                                 HttpServletRequest request) {
-        // TODO: id ==> getActural(id)
+        article.setID(fileInfoService.getActual(article.getID()).getID());
         fileInfoService.updateFile(article);
         System.out.println("publish: " + article.getID() + " " + article.getTitle()
                         + ' ' + article.getContent());
