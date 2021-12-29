@@ -4,7 +4,7 @@
 
     if (isset($_POST['submit'])) {
         echo "<pre>";
-        echo htmlspecialchars($_POST["test-editormd-markdown-doc"]);
+        echo htmlspecialchars($_POST["content"]);
         
         if(isset($_POST["test-editormd-html-code"])) {
             echo "<br/><br/>";

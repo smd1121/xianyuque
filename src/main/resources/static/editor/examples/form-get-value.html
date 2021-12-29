@@ -54,7 +54,7 @@ testEditor.getPreviewedHTML();  // 获取预览窗口里的 HTML，在开启 wat
 
     if (isset($_POST['submit'])) {
         echo "<pre>";
-        echo htmlspecialchars($_POST["test-editormd-markdown-doc"]);
+        echo htmlspecialchars($_POST["content"]);
         echo "<br/><br/>";
         echo htmlspecialchars($_POST["test-editormd-html-code"]);
         echo "</pre>";

@@ -1,11 +1,13 @@
 package com.xuaninsr.xianyuque.service.impl;
 
 import com.xuaninsr.xianyuque.mapper.FileInfoMapper;
+import com.xuaninsr.xianyuque.pojo.Article;
 import com.xuaninsr.xianyuque.pojo.FileInfo;
 import com.xuaninsr.xianyuque.service.FileInfoService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -43,7 +45,20 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     public void deleteFileByID(int ID) {
-        // TODO: delete the file
         fileInfoMapper.deleteByID(ID);
+    }
+
+    public void updateFile(Article article) {
+        if (article != null)
+            fileInfoMapper.updateFile(article.getID(), article.getTitle(),
+                    article.getContent(), new Timestamp(System.currentTimeMillis()));
+    }
+
+    public FileInfo getCache(int ID) {
+        return fileInfoMapper.getCache(ID);
+    }
+
+    public FileInfo getActual(int ID) {
+        return fileInfoMapper.getActual(ID);
     }
 }

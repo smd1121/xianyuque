@@ -36,4 +36,22 @@
     <delete id="deleteByID">
         DELETE FROM file_info WHERE ID = #{ID};
     </delete>
+
+    <update id="updateFile">
+        UPDATE file_info
+        SET title = #{title}, localName = #{content}, lastEdit = #{lastEdit}
+        WHERE ID = #{ID};
+    </update>
+
+    <select id="getCache" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info WHERE ID IN (
+            SELECT ID FROM file_info WHERE cacheFor = #{ID}
+        );
+    </select>
+
+    <select id="getActual" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info WHERE ID = (
+            SELECT cacheFor FROM file_info WHERE ID = #{ID}
+        );
+    </select>
 </mapper>

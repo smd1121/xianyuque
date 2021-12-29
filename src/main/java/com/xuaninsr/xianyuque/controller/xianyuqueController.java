@@ -104,7 +104,7 @@ public class xianyuqueController {
             return mv;
         }
         else if (!MD5Util.getMD5(user.getPassword()).equals(existingUser.getPassword())) {
-            System.out.println(user.getPassword() + " " + existingUser.getPassword() + " "
+            System.out.println(MD5Util.getMD5(user.getPassword()) + " " + existingUser.getPassword() + " "
                     + MD5Util.getMD5(user.getPassword()).equals(existingUser.getPassword()));
             ModelAndView mv = new ModelAndView("login");
             mv.addObject("loginTips", "用户名或密码错误！");
@@ -178,7 +178,8 @@ public class xianyuqueController {
         return "redirect:/";
     }
 
-    private void fillListWithSon(FileInfo f, List<FileInfo> list, String userID, int level) {
+    private void fillListWithSon(FileInfo f, List<FileInfo> list,
+                                 String userID, int level) {
         for (FileInfo innerF : fileInfoService.selectSonVisibleForUser(f.getID(), userID)) {
             String titleWithSpace = "";
             for (int i = 0; i < level; i++)
@@ -190,7 +191,8 @@ public class xianyuqueController {
     }
 
     @RequestMapping("/list/{id}")
-    public String list(Model model, @PathVariable String id, HttpServletRequest request){
+    public String list(Model model, @PathVariable String id,
+                       HttpServletRequest request){
         User loginUser = getUserByRequest(request);
 
         if (loginUser == null)
@@ -232,15 +234,32 @@ public class xianyuqueController {
         return mv;
     }
 
-    @RequestMapping("/edit/{id}")
-    public ModelAndView edit(Model model, @PathVariable int id){
-        ModelAndView mv = new ModelAndView("/edit");
+    @RequestMapping("/read/{id}")
+    public ModelAndView read(Model model, @PathVariable int id) {
+        // TODO: privilege
+        // TODO: not the latest
+        // TODO: edit
+        ModelAndView mv = new ModelAndView("/read");
         return setMVForEditAndRead(id, mv);
     }
 
-    @RequestMapping("/read/{id}")
-    public ModelAndView read(Model model, @PathVariable int id) {
-        ModelAndView mv = new ModelAndView("/read");
+    @RequestMapping("/edit/{id}")
+    public ModelAndView edit(Model model, @PathVariable int id){
+        // TODO: privilege
+        ModelAndView mv = new ModelAndView("/edit");
+        // TODO: id ==> getCache(id)
         return setMVForEditAndRead(id, mv);
+    }
+
+    @RequestMapping("/publish")
+    public ModelAndView publish(@ModelAttribute(value="article") Article article,
+                                HttpServletRequest request) {
+        // TODO: id ==> get
+        // int id = getActual(article.getID());
+        // updateFileInfo(article);
+        fileInfoService.updateFile(article);
+        System.out.println("publish: " + article.getID() + " " + article.getTitle()
+                        + ' ' + article.getContent());
+        return new ModelAndView("redirect:/read/" + article.getID());
     }
 }

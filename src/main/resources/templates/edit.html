@@ -28,9 +28,9 @@
     <form name="mdEditorForm">
         <input type="text" name="title" class="title" th:value="${article.title}"/>
         <div id="test-editormd" style="margin: 20px auto; width: 70%;">
-            <textarea style="display:none" th:text="${article.content}"></textarea>
+            <textarea style="display:none" name="content" th:text="${article.content}"></textarea>
         </div>
-        <input hidden="hidden" name="id" th:value="${article.ID}"/>
+        <input hidden="hidden" name="ID" th:value="${article.ID}"/>
     </form>
 </div>
 
@@ -46,7 +46,7 @@
             syncScrolling : "single",
             path    : "../lib/",
             // 表示支持上传图片
-            imageUpload : true,
+            imageUpload : false,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
             // 上传图片的请求接口
             imageUploadURL : "/uploadImg",
@@ -67,16 +67,6 @@
                 }
             }
         });
-
-        /*
-        // or
-        testEditor = editormd({
-            id      : "test-editormd",
-            width   : "90%",
-            height  : 640,
-            path    : "../lib/"
-        });
-        */
     });
 </script>
 </body>
