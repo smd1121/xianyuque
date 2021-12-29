@@ -16,4 +16,14 @@
     <select id="selectAll" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
         SELECT * FROM file_info ORDER BY lastEdit;
     </select>
+
+    <select id="selectAllTopLevelByUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to);
+    </select>
+
+    <select id="selectSonVisibleForUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
+        SELECT * FROM file_info
+        WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to)
+        AND insideOf = #{fileID};
+    </select>
 </mapper>

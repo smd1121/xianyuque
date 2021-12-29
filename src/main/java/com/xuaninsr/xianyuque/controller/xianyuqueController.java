@@ -17,44 +17,56 @@ import java.util.*;
 
 @Controller // controller 想要一个模板！
 public class xianyuqueController {
-
     private FileInfoService fileInfoService;
     private UserService userService;
-    private List<Cookie> cookies;
-
-    private boolean isInCookie(String loginState) {
-        for (Cookie c : cookies) {
-            if (c.getValue().equals(loginState))
-                return true;
-        }
-        return false;
-    }
+    private Map<Cookie, String> cookies;
 
     @Autowired
     public xianyuqueController(FileInfoService fileInfoService, UserService userService) {
         this.fileInfoService = fileInfoService;
         this.userService = userService;
-        this.cookies = new ArrayList<>() ;
+        this.cookies = new HashMap<>();
+    }
+
+    private String getCookieMapID(Cookie cookie) {
+        for (Cookie c : cookies.keySet()) {
+            if (c.getValue().equals(cookie.getValue()))
+                return cookies.get(c);
+        }
+        return null;
+    }
+
+    private boolean checkIsLogin(HttpServletRequest request) {
+        Cookie[] requestCookies = request.getCookies();
+        String id;
+
+        for (Cookie c : requestCookies) {
+            id = getCookieMapID(c);
+            if (id != null)
+                return true;
+        }
+        return false;
     }
 
     @RequestMapping("/")
     public String index(HttpServletRequest request) {
         Cookie[] requestCookies = request.getCookies();
+        String id;
         for (Cookie c : requestCookies) {
-            String loginState = c.getValue();
-            System.out.println("requestCookie: " + c.getName() + ' ' + loginState);
-            if (isInCookie(loginState))
-                return "redirect:/list";
+            id = getCookieMapID(c);
+            if (id != null)
+                return "redirect:/list/" + id;
         }
         return "redirect:/login";
     }
 
-    @RequestMapping("/list")
-    public String list(Model model){
-        System.out.println(model);
+    @RequestMapping("/list/{id}")
+    public String list(Model model, @PathVariable String id, HttpServletRequest request){
+        if (!checkIsLogin(request))
+            return "redirect:/login";
+
         model.addAttribute("files", fileInfoService.selectAllFileInfo());
-        System.out.println(model);
-        // helloThymeleaf 会找到 templates/list.html，总而成为了模板
+        // helloThymeleaf 会找到 templates/list.html，从而成为了模板
         return "list";
     }
 
@@ -94,12 +106,16 @@ public class xianyuqueController {
             mv.addObject("loginTips", "用户名或密码错误！");
             return mv;
         } else {
-            Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
-            cookie.setMaxAge(60 * 60 * 24);
-            cookies.add(cookie);
-            response.addCookie(cookie);
-            return new ModelAndView("redirect:/list");
+            return setCookie(user, response);
         }
+    }
+
+    private ModelAndView setCookie(@ModelAttribute("user") User user, HttpServletResponse response) {
+        Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
+        cookie.setMaxAge(60 * 60 * 24);
+        cookies.put(cookie, user.getID());
+        response.addCookie(cookie);
+        return new ModelAndView("redirect:/list/" + user.getID());
     }
 
     @RequestMapping(value = "/register", method=RequestMethod.POST)
@@ -113,11 +129,7 @@ public class xianyuqueController {
         }
         else {
             userService.insertUser(user);
-            Cookie cookie = new Cookie("loginState", MD5Util.getMD5(user.getID()));
-            cookie.setMaxAge(60 * 60 * 24);
-            cookies.add(cookie);
-            response.addCookie(cookie);
-            return new ModelAndView("redirect:/list");
+            return setCookie(user, response);
         }
     }
 }

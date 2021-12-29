@@ -7,7 +7,6 @@ public class MD5Util {
     public static String getMD5(String str) {
         String base = str +"/"+ slat;
         String md5 = DigestUtils.md5DigestAsHex(base.getBytes());
-        System.out.println("> " + str + "   " + md5);
         return md5;
     }
 }
