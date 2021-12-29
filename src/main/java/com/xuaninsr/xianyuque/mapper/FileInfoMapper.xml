@@ -18,7 +18,9 @@
     </select>
 
     <select id="selectAllTopLevelByUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">
-        SELECT * FROM file_info WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to);
+        SELECT * FROM file_info
+        WHERE (ID, #{userID}) IN (SELECT fileID, userID FROM visible_to)
+        AND isTopLev = true AND insideOf is null;
     </select>
 
     <select id="selectSonVisibleForUser" resultType="com.xuaninsr.xianyuque.pojo.FileInfo">

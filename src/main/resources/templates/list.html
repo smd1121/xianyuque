@@ -10,21 +10,44 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
           integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <style type="text/css">
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding: 3px 8px;
+            text-decoration: none;
+        }
+        .greenButton:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            color: white;
+            text-decoration: none;
+            background-color: #308025;
+        }
+    </style>
 </head>
 <body>
 <div th:switch="${files}" class="container my-5">
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row" style="width: 100%; margin: 4px 4px;">
+        <div style="width: 100%;">
             <div th:case="*">
-                <h2 class="my-5">Files</h2>
-                <table class="table table-striped table-responsive-md">
+                <table class="table table-striped table-responsive-md" width="100%">
                     <tbody>
                     <tr th:each="fileInfo : ${files}">
-                        <td th:text="${fileInfo.title}"></td>
-                        <td th:text="${fileInfo.lastEdit}"></td>
-                        <td><a th:href="@{/edit/${fileInfo.ID}}" class="btn btn-primary">编辑</a></td>
-                        <td><a th:href="@{/move/${fileInfo.ID}}" class="btn btn-primary">移动</a></td>
-                        <td><a th:href="@{/delete/${fileInfo.ID}}" class="btn btn-primary">删除</a></td>
+                        <td th:text="${fileInfo.title}" style="cursor: pointer;"
+                            th:onclick="'window.location.href=\'/read/' + ${fileInfo.ID} + '\''"></td>
+                        <td th:text="${fileInfo.lastEdit}" width="120px"></td>
+                        <td width="80px"><a th:href="@{/edit/${fileInfo.ID}}" class="greenButton">编辑</a></td>
+                        <td width="80px"><a th:href="@{/move/${fileInfo.ID}}" class="greenButton">移动</a></td>
+                        <td width="80px"><a th:href="@{/delete/${fileInfo.ID}}" class="greenButton">删除</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -32,5 +55,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

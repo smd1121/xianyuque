@@ -1,5 +1,6 @@
 package com.xuaninsr.xianyuque.controller;
 
+import com.xuaninsr.xianyuque.pojo.FileInfo;
 import com.xuaninsr.xianyuque.pojo.User;
 import com.xuaninsr.xianyuque.service.FileInfoService;
 import com.xuaninsr.xianyuque.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.*;
 
 @Controller // controller 想要一个模板！
@@ -60,12 +62,29 @@ public class xianyuqueController {
         return "redirect:/login";
     }
 
+    private void fillListWithSon(FileInfo f, List<FileInfo> list, String userID, int level) {
+        for (FileInfo innerF : fileInfoService.selectSonVisibleForUser(f.getID(), userID)) {
+            String titleWithSpace = "";
+            for (int i = 0; i < level; i++)
+                titleWithSpace += " ";
+            innerF.setTitle(titleWithSpace + innerF.getTitle());
+            list.add(innerF);
+            fillListWithSon(innerF, list, userID, level + 1);
+        }
+    }
+
     @RequestMapping("/list/{id}")
     public String list(Model model, @PathVariable String id, HttpServletRequest request){
         if (!checkIsLogin(request))
             return "redirect:/login";
 
-        model.addAttribute("files", fileInfoService.selectAllFileInfo());
+        List<FileInfo> list = new ArrayList<>();
+        for (FileInfo f : fileInfoService.selectAllTopLevelByUser(id)) {
+            list.add(f);
+            fillListWithSon(f, list, id, 1);
+        }
+
+        model.addAttribute("files", list);
         // helloThymeleaf 会找到 templates/list.html，从而成为了模板
         return "list";
     }

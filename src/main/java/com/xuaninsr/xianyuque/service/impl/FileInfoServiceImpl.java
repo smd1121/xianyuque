@@ -27,4 +27,14 @@ public class FileInfoServiceImpl implements FileInfoService {
     public List<FileInfo> selectAllFileInfo() {
         return fileInfoMapper.selectAll();
     }
+
+    @Override
+    public List<FileInfo> selectAllTopLevelByUser(String userID) {
+        return fileInfoMapper.selectAllTopLevelByUser(userID);
+    }
+
+    @Override
+    public List<FileInfo> selectSonVisibleForUser(int fileID, String userID) {
+        return fileInfoMapper.selectSonVisibleForUser(fileID, userID);
+    }
 }

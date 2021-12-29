@@ -10,7 +10,7 @@ public interface FileInfoMapper {
     void insert(FileInfo fileInfo);
     FileInfo selectByID(int ID);
     List<FileInfo> selectAll();
-    List<FileInfo> selectAllTopLevelByUser(int userID);
-    List<FileInfo> selectSonVisibleForUser(int fileID, int userID);
+    List<FileInfo> selectAllTopLevelByUser(String userID);
+    List<FileInfo> selectSonVisibleForUser(int fileID, String userID);
 
 }
