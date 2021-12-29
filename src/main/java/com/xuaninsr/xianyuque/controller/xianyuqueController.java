@@ -219,14 +219,7 @@ public class xianyuqueController {
         return "redirect:/";
     }
 
-    @RequestMapping("/edit")
-    public String edit(Model model){
-        return "edit";
-    }
-
-    @RequestMapping("/read/{id}")
-    public ModelAndView read(Model model, @PathVariable int id) {
-        ModelAndView mv = new ModelAndView("/read");
+    private ModelAndView setMVForEditAndRead(@PathVariable int id, ModelAndView mv) {
         FileInfo fileInfo = fileInfoService.selectFileInfoByID(id);
         if (fileInfo == null) {
             return new ModelAndView("/error");
@@ -237,5 +230,17 @@ public class xianyuqueController {
         article.setContent(fileInfo.getLocalName());
         mv.addObject("article", article);
         return mv;
+    }
+
+    @RequestMapping("/edit/{id}")
+    public ModelAndView edit(Model model, @PathVariable int id){
+        ModelAndView mv = new ModelAndView("/edit");
+        return setMVForEditAndRead(id, mv);
+    }
+
+    @RequestMapping("/read/{id}")
+    public ModelAndView read(Model model, @PathVariable int id) {
+        ModelAndView mv = new ModelAndView("/read");
+        return setMVForEditAndRead(id, mv);
     }
 }

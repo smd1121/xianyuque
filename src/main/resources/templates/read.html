@@ -7,13 +7,22 @@
     <link rel="stylesheet" th:href="@{/css/editormd.css}"/>
     <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon"/>
     <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon"/>
+    <style type="text/css">
+        body {background:#f5f5f5}
+        .title {
+            margin: 50px 15% 20px;
+            border: none;
+            font-size: 32px;
+            font-weight: bolder;
+            color: #555555;
+            background:#f5f5f5
+        }
+    </style>
 </head>
 <body>
 
 <div id="layout">
-    <header>
-        <h1 th:text="${article.title}"></h1>
-    </header>
+    <div th:text="${article.title}" class="title"></div>
     <div id="test-editormd" style="margin: 20px auto; width: 70%;">
         <textarea style="display:none;" th:text="${article.content}"></textarea>
     </div>

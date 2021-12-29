@@ -7,21 +7,33 @@
     <link rel="stylesheet" th:href="@{/css/editormd.css}" />
     <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
     <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <style type="text/css">
+        body {background:#f5f5f5}
+        .title {
+            margin: 50px 5% 0;
+            border: none;
+            font-size: 32px;
+            font-weight: bolder;
+            color: #555555;
+            background:#f5f5f5
+        }
+        .title:focus {
+            border: #d5d5d5;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 <div id="layout">
-    <header>
-        <h1>Simple example</h1>
-    </header>
     <form name="mdEditorForm">
-        标题:<input type="text" name="title"><br>
-        作者:<input type="text" name="author">
-        <div id="test-editormd">
-            <textarea style="display:none;" name="content"></textarea>
+        <input type="text" name="title" class="title" th:value="${article.title}"/>
+        <div id="test-editormd" style="margin: 20px auto; width: 70%;">
+            <textarea style="display:none" th:text="${article.content}"></textarea>
         </div>
+        <input hidden="hidden" name="id" th:value="${article.ID}"/>
     </form>
-
 </div>
+
 <script th:src="@{/js/examples/jquery.min.js}"></script>
 <script th:src="@{/js/editormd.min.js}"></script>
 <script type="text/javascript">
@@ -37,7 +49,7 @@
             imageUpload : true,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
             // 上传图片的请求接口
-            imageUploadURL : "/article/image/upload",
+            imageUploadURL : "/uploadImg",
             // 工具栏图标的设置，大家可以自定义。比如 publish就是我定义的。
             toolbarIcons : function () {
                 return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info", "||", "publish"];
@@ -50,7 +62,7 @@
             toolbarHandlers : {
                 publish: function (cm, icon, cursor, selection) {
                     mdEditorForm.method = "post";
-                    mdEditorForm.action = "/article/publish";//提交至服务器的路径
+                    mdEditorForm.action = "/publish";//提交至服务器的路径
                     mdEditorForm.submit();
                 }
             }
