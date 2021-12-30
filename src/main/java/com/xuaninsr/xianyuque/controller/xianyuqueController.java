@@ -309,6 +309,7 @@ public class xianyuqueController {
         if (user == null || checkIfNotPrivileged(user.getID(), actualID))
             return new ModelAndView("redirect:/error");
 
+        fileInfoService.updateFile(article);
         article.setID(actualID);
         fileInfoService.updateFile(article);
         return new ModelAndView("redirect:/read/" + article.getID());
@@ -317,10 +318,14 @@ public class xianyuqueController {
     @RequestMapping("/autoSave/{id}")
     public String autoSave(@ModelAttribute(value="article") Article article,
                            HttpServletRequest request, @PathVariable int id) {
+        System.out.println("autoSave: " + id + " " + article.getID() + " " + article.getTitle());
 
         User user = getUserByRequest(request);
-        if (user == null || checkIfNotPrivileged(user.getID(), id))
+        if (user == null || checkIfNotPrivileged(user.getID(),
+                                fileInfoService.getActual(id).getID()))
             return "redirect:/error";
+
+        System.out.println("confirm autoSave: " + id + " " + article.getID() + " " + article.getTitle());
 
         fileInfoService.updateFile(article);
         return "redirect:/edit/" + fileInfoService.getActual(id).getID();

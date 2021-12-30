@@ -113,12 +113,12 @@
             clearTimeout(auto);
             auto = setTimeout(function(){ submitform(); autoRefresh(); }, 120000);
         }
+
+        window.addEventListener('unload', onCloseAutoSubmit, false);
     }
 
-    window.addEventListener('unload', onCloseAutoSubmit, false);
-
     function onCloseAutoSubmit() {
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append("ID", document.getElementById("ID").value.toString());
         formData.append("title", document.getElementById("title").value.toString());
         formData.append("content", document.getElementById("content").value.toString());
