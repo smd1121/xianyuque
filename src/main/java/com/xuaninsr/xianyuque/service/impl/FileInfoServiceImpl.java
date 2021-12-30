@@ -68,4 +68,8 @@ public class FileInfoServiceImpl implements FileInfoService {
     public void insertPrivilege(int fileID, String userID) {
         fileInfoMapper.insertPrivilege(fileID, userID);
     }
+
+    public void moveFileTo(int son, int father) {
+        fileInfoMapper.moveTo(son, father == -1 ? null : Integer.toString(father), father == -1);
+    }
 }

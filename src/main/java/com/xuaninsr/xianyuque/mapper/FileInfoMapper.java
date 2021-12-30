@@ -20,4 +20,5 @@ public interface FileInfoMapper {
     FileInfo getCache(int ID);
     FileInfo getActual(int ID);
     void insertPrivilege(int fileID, String userID);
+    void moveTo(int son, String father, boolean isTopLev);
 }

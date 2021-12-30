@@ -48,7 +48,14 @@
 <body>
 <div id="layout">
     <form name="mdEditorForm" id="mdEditorForm">
-        <input type="text" id="title" name="title" class="title" th:value="${article.title}"/>
+        <div>
+            <input type="text" id="title" name="title" class="title"
+                   style="display: inline-block;" th:value="${article.title}"/>
+            <button style="margin: 50px auto 20px 15%; font-size: 20px; padding: 6px 16px; display: inline-block;"
+                    type="button" class="greenButton" onclick="location.href='/'">
+                返回首页
+            </button>
+        </div>
         <div id="test-editormd" style="margin: 20px auto; width: 70%;">
             <textarea style="display:none" id="content" name="content" th:text="${article.content}"></textarea>
         </div>

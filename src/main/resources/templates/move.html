@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--表示这个是⼀个thymeleaf-->
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <title>移动 · 咸鱼雀</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="@{/logo.ico}" type="image/x-icon" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <style type="text/css">
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding: 3px 8px;
+            text-decoration: none;
+        }
+        .greenButton:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            color: white;
+            text-decoration: none;
+            background-color: #308025;
+        }
+        .box {
+            width: 60%;
+            height: 100%;
+            text-align: justify;
+        }
+        .box:after {
+            content: "";
+            display: inline-block;
+            overflow: hidden;
+            width: 100%;
+        }
+        .box span {
+            display: inline-block;
+            text-align: center;
+            line-height: 30px;
+            width: 15%;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 50px 20%" class="box">
+    <span onclick="window.location.href='/'"
+          class="greenButton">返回</span>
+</div>
+<div th:switch="${files}" class="container my-5">
+    <div class="row" style="width: 100%; margin: 4px 4px;">
+        <div style="width: 100%;">
+            <div th:case="*">
+                <table class="table table-striped table-responsive-md" width="100%">
+                    <tbody>
+                    <tr>
+                        <td th:text="根目录" style="cursor: pointer;"
+                            th:onclick="'window.location.href=\'/moveTo/' + ${thisFile} + '/0' + '\''"></td>
+                        <td width="200px"></td>
+                    </tr>
+                    <tr th:each="fileInfo : ${files}">
+                        <td th:text="${fileInfo.title}" style="cursor: pointer;"
+                            th:onclick="'window.location.href=\'/moveTo/' + ${thisFile} + '/' + ${fileInfo.ID} + '\''"></td>
+                        <td th:text="${fileInfo.lastEdit}" width="200px"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

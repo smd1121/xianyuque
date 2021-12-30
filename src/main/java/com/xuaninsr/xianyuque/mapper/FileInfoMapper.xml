@@ -30,7 +30,7 @@
     </select>
 
     <select id="getLargestID" resultType="int">
-        SELECT MAX(ID) FROM file_info;
+        SELECT COALESCE(MAX(ID), 1) FROM file_info;
     </select>
 
     <delete id="deleteByID">
@@ -58,4 +58,9 @@
     <insert id="insertPrivilege">
         INSERT INTO visible_to VALUES (#{userID}, #{fileID}, true, true);
     </insert>
+
+    <update id="moveTo">
+        UPDATE file_info
+        SET insideOf = #{father}, isTopLev = #{isTopLev} WHERE ID = #{son};
+    </update>
 </mapper>

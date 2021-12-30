@@ -17,4 +17,5 @@ public interface FileInfoService {
     FileInfo getCache(int ID);
     FileInfo getActual(int ID);
     void insertPrivilege(int fileID, String userID);
+    void moveFileTo(int son, int father);
 }

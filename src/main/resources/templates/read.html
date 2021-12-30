@@ -17,12 +17,47 @@
             color: #555555;
             background:#f5f5f5
         }
+        .greenButton {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding: 3px 8px;
+            size: inherit;
+            text-decoration: none;
+        }
+        .greenButton:hover {
+            color: white;
+            text-decoration: none;
+            background-color: #7BD872;
+        }
+        .greenButton:active {
+            color: white;
+            text-decoration: none;
+            background-color: #308025;
+        }
     </style>
 </head>
 <body>
 
 <div id="layout">
-    <div th:text="${article.title}" class="title"></div>
+    <div>
+        <div th:text="${article.title}" class="title" style="display: inline-block; width: 30%"></div>
+        <span style="display: inline-block; margin: 50px 15% 20px 0; float:right;">
+            <button id="register" type="button" class="greenButton"
+                    style="font-size: 20px; padding: 6px 16px; display: inline-block;"
+                    th:onclick="'window.location.href=\'/edit/' + ${article.ID} + '\''">
+            编辑
+            </button>
+            <button style="font-size: 20px; padding: 6px 16px; display: inline-block;"
+                    type="button" class="greenButton" onclick="location.href='/'">
+                返回首页
+            </button>
+        </span>
+    </div>
     <div id="test-editormd" style="margin: 20px auto; width: 70%;">
         <textarea style="display:none;" th:text="${article.content}"></textarea>
     </div>

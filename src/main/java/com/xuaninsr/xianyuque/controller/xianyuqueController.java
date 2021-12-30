@@ -42,18 +42,6 @@ public class xianyuqueController {
         return null;
     }
 
-    private boolean checkIsLogin(HttpServletRequest request) {
-        Cookie[] requestCookies = request.getCookies();
-        String id;
-
-        for (Cookie c : requestCookies) {
-            id = getCookieMapID(c);
-            if (id != null)
-                return true;
-        }
-        return false;
-    }
-
     private User getUserByRequest(HttpServletRequest request) {
         Cookie[] requestCookies = request.getCookies();
         String id;
@@ -182,10 +170,7 @@ public class xianyuqueController {
     private void fillListWithSon(FileInfo f, List<FileInfo> list,
                                  String userID, int level) {
         for (FileInfo innerF : fileInfoService.selectSonVisibleForUser(f.getID(), userID)) {
-            String titleWithSpace = "";
-            for (int i = 0; i < level; i++)
-                titleWithSpace += " ";
-            innerF.setTitle(titleWithSpace + innerF.getTitle());
+            innerF.setTitle(" ".repeat(Math.max(0, level)) + innerF.getTitle());
             list.add(innerF);
             fillListWithSon(innerF, list, userID, level + 1);
         }
@@ -210,6 +195,7 @@ public class xianyuqueController {
 
         if (list.isEmpty())
             return "redirect:/start";
+
         model.addAttribute("files", list);
         // helloThymeleaf 会找到 templates/list.html，从而成为了模板
         return "list";
@@ -219,6 +205,22 @@ public class xianyuqueController {
     public String handleDelete(@ModelAttribute(value="fileID") int fileID) {
         fileInfoService.deleteFileByID(fileID);
         return "redirect:/";
+    }
+
+    private boolean checkIfNotPrivileged(String userID, int fileID) {
+        if (fileID == -1)
+            return false;
+
+        List<FileInfo> list = new ArrayList<>();
+        for (FileInfo f : fileInfoService.selectAllTopLevelByUser(userID)) {
+            list.add(f);
+            fillListWithSon(f, list, userID, 1);
+        }
+        for (FileInfo f : list) {
+            if (f.getID() == fileID)
+                return false;
+        }
+        return true;
     }
 
     private ModelAndView setMVForEditAndRead(@PathVariable int id, ModelAndView mv) {
@@ -235,17 +237,23 @@ public class xianyuqueController {
     }
 
     @RequestMapping("/read/{id}")
-    public ModelAndView read(Model model, @PathVariable int id) {
-        // TODO: privilege
-        // TODO: not the latest
-        // TODO: edit
+    public ModelAndView read(@PathVariable int id,
+                             HttpServletRequest request) {
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), id))
+            return new ModelAndView("redirect:/error");
+
         ModelAndView mv = new ModelAndView("/read");
         return setMVForEditAndRead(id, mv);
     }
 
     @RequestMapping("/edit/{id}")
-    public ModelAndView edit(Model model, @PathVariable int id){
-        // TODO: privilege
+    public ModelAndView edit(@PathVariable int id,
+                             HttpServletRequest request){
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), id))
+            return new ModelAndView("redirect:/error");
+
         ModelAndView mv = new ModelAndView("/edit");
         id = fileInfoService.getCache(id).getID();
         return setMVForEditAndRead(id, mv);
@@ -254,7 +262,7 @@ public class xianyuqueController {
     private Map<String, Long> newPeriod = new HashMap<>();
 
     @RequestMapping("/new")
-    public ModelAndView handleNew(Model model, HttpServletRequest request){
+    public ModelAndView handleNew(HttpServletRequest request){
         System.out.println("  new  ");
         User user = getUserByRequest(request);
         if (user == null)
@@ -295,19 +303,82 @@ public class xianyuqueController {
     @RequestMapping("/publish")
     public ModelAndView publish(@ModelAttribute(value="article") Article article,
                                 HttpServletRequest request) {
-        article.setID(fileInfoService.getActual(article.getID()).getID());
+        int actualID = fileInfoService.getActual(article.getID()).getID();
+
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), actualID))
+            return new ModelAndView("redirect:/error");
+
+        article.setID(actualID);
         fileInfoService.updateFile(article);
-        System.out.println("publish: " + article.getID() + " " + article.getTitle()
-                        + ' ' + article.getContent());
         return new ModelAndView("redirect:/read/" + article.getID());
     }
 
     @RequestMapping("/autoSave/{id}")
     public String autoSave(@ModelAttribute(value="article") Article article,
                            HttpServletRequest request, @PathVariable int id) {
+
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), id))
+            return "redirect:/error";
+
         fileInfoService.updateFile(article);
-        System.out.println("autoSave: " + article.getID() + " " + article.getTitle()
-                + ' ' + article.getContent());
-        return "redirect:/edit/" + Integer.toString(fileInfoService.getActual(id).getID());
+        return "redirect:/edit/" + fileInfoService.getActual(id).getID();
+    }
+
+    @RequestMapping("/move/{id}")
+    public ModelAndView handleMove(@PathVariable int id,
+                                   HttpServletRequest request) {
+        System.out.println("Move: " + id);
+
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), id))
+            return new ModelAndView("redirect:/error");
+
+        List<FileInfo> list = new ArrayList<>();
+        for (FileInfo f : fileInfoService.selectAllTopLevelByUser(user.getID())) {
+            list.add(f);
+            fillListWithSon(f, list, user.getID(), 1);
+        }
+
+        ModelAndView mv = new ModelAndView("/move");
+        mv.addObject("files", list);
+        mv.addObject("thisFile", id);
+        return mv;
+    }
+
+    private boolean checkIfMoveValid(String userID, int id, int toId) {
+        if (toId == -1)
+            return true;
+
+        if (id == toId)
+            return false;
+
+        List<FileInfo> list = new ArrayList<>();
+        fillListWithSon(fileInfoService.selectFileInfoByID(id), list, userID, 1);
+        for (FileInfo f : list) {
+            System.out.println("Check: " + f.getID() + toId);
+            if (toId == f.getID())
+                return false;
+        }
+        return true;
+    }
+
+    @RequestMapping("/moveTo/{id}/{toId}")
+    public ModelAndView handleMoveTo(@PathVariable int id,
+                                     @PathVariable int toId,
+                                   HttpServletRequest request) {
+        if (toId == 0)
+            toId = -1;
+
+        User user = getUserByRequest(request);
+        if (user == null || checkIfNotPrivileged(user.getID(), id)
+         || checkIfNotPrivileged(user.getID(), toId))
+            return new ModelAndView("redirect:/error");
+
+        if (checkIfMoveValid(user.getID(), id, toId))
+            fileInfoService.moveFileTo(id, toId);
+
+        return new ModelAndView("redirect:/");
     }
 }

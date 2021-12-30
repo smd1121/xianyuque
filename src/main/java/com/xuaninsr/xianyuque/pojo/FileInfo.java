@@ -86,13 +86,13 @@ public class FileInfo implements Serializable {
 
         Timestamp lastEdit = new Timestamp(this.lastEdit.getTime() - 60 * 60 * 8 * 1000);
 
-        long currentTimestamps = System.currentTimeMillis();
+        /*long currentTimestamps = System.currentTimeMillis();
         long oneDayTimestamps = (long) (60 * 60 * 24 * 1000);
         long todayBegin = currentTimestamps -
                 (currentTimestamps + 60 * 60 * 8 * 1000) % oneDayTimestamps;
         if (lastEdit.after(new Timestamp(todayBegin))) {
             return new Time(lastEdit.getTime()).toString();
-        }
+        }*/
         return new Date(lastEdit.getTime()).toString() + " "
                 + new Time(lastEdit.getTime()).toString();
     }
